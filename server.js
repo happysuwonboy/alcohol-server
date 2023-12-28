@@ -1,6 +1,7 @@
 import './env.js';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 
 const server = express();
@@ -14,7 +15,7 @@ server.use(cors({
 
 server.use(express.json())
 server.use(express.urlencoded())
-server.use(express.cookieParser())
+server.use(cookieParser())
 
 
 server.listen(PORT, ()=>{console.log(`listening on ${PORT}...`)})
