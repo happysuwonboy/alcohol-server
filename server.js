@@ -2,6 +2,7 @@ import './env.js';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import alcoholdetailRouter from './router/alcoholdetailRouter.js';
 
 
 const server = express();
@@ -16,6 +17,9 @@ server.use(cors({
 server.use(express.json())
 server.use(express.urlencoded())
 server.use(cookieParser())
+
+
+server.use('/alcoholdetail', alcoholdetailRouter)
 
 
 server.listen(PORT, ()=>{console.log(`listening on ${PORT}...`)})
