@@ -1,6 +1,6 @@
 import {db} from '../db/database.js';
 
-export async function getFilterList(filterInfo, sort) {
+export async function getFilterList(searchInput, searchInputPrice, filterInfo, sort) {
   // where절에 들어갈 쿼리 동적 생성
   let sqlConditions = '';
 
@@ -64,7 +64,7 @@ export async function getFilterList(filterInfo, sort) {
           conditions.push(`cast(ac.ABV as decimal(10, 2)) >= 30`);
             break;
             // default:
-              // 생각 중
+            // 생각 중
         }
       }
     });
@@ -88,7 +88,7 @@ export async function getFilterList(filterInfo, sort) {
             conditions.push(`ac.flavor_sweet between 4 and 5`);
             break;
             // default:
-              // 생각 중
+            // 생각 중
         }
       }
     });
@@ -112,7 +112,7 @@ export async function getFilterList(filterInfo, sort) {
             conditions.push(`ac.flavor_sour between 4 and 5`);
             break;
             // default:
-              // 생각 중
+            // 생각 중
         }
       }
     });
@@ -136,7 +136,7 @@ export async function getFilterList(filterInfo, sort) {
             conditions.push(`ac.flavor_soda between 4 and 5`);
             break;
             // default:
-              // 생각 중
+            // 생각 중
         }
       }
     });
@@ -166,7 +166,7 @@ export async function getFilterList(filterInfo, sort) {
             condition.push(`ac.alcohol_price >= 100000`);
             break;
             // default:
-              // 생각 중
+            // 생각 중
         }
       }
     });
@@ -192,28 +192,34 @@ export async function getFilterList(filterInfo, sort) {
       case 6 : // 가격
       return condition += `(${handleCategory6(category)})`;
       // default:
-        // return '';
+      // return '';
     }
   }
 
-  // 1) 선택한 옵션 카테고리 객체 찾아 함수 실행 및 최종 쿼리 연산자 적용
-  filterInfo.forEach((category) => {
-    if (category.isSelected) {
-      sqlConditions += ` and ${handleCategoryConditions(category)}`;
-    }
-  });
+  // 1) 모든 카테고리 중 체크박스 선택 여부 판단 ( 하나라도 있는지 ) 및 최종 쿼리 연산자 적용
+  const isCategorySeleted = filterInfo.some(category => category.isSelected);
 
-  // const sql = ` select ac.alcohol_id, alcohol_name, alcohol_price, alcohol_img1, hashtag, review_star
-  // 아래 sql selete문 잘가지고 오는지 테스트 
-  const sql = ` select ac.alcohol_id, alcohol_type, ABV, flavor_sweet, flavor_soda, flavor_sour, alcohol_name, alcohol_price, alcohol_img1, hashtag, review_star, register_date
-                    from alcohol ac
-                      left outer join order_detail od on ac.alcohol_id = od.alcohol_id
-                      left outer join review rv on od.order_id = rv.order_id
-                      where 1 = 1
-                      ${sqlConditions}
-                      order by ${sortSelected}`
+  if(isCategorySeleted) {
+    filterInfo.forEach(category => { // 해당하는 카테고리가 체크된 것이 있다면 option 쿼리문 함수 실행
+      if(category.isSelected) sqlConditions += ` and ${handleCategoryConditions(category)}`;
+    })
+  } else { // 술 이름 검색어 입력 진행
+    console.log(searchInput);
+    sqlConditions +=  searchInput.length > 0 ? ` and alcohol_name like '%${searchInput}%'` : '';
+  }
 
-  console.log(sql);
+  // const sql = ` select ac.alcohol_id, alcohol_name, alcohol_price, dc_precent, alcohol_img1, hashtag, review_star
+  // 아래 sql selete문 잘가지고 오는지 테스트
+  const sql = ` select ac.alcohol_id, alcohol_type, dc_percent, cast(alcohol_price - (alcohol_price / dc_percent) as signed) as dc_price, ABV, flavor_sweet, flavor_soda, flavor_sour, alcohol_name, alcohol_price, alcohol_img1, hashtag, review_star, register_date
+                  from alcohol ac
+                    left outer join order_detail od on ac.alcohol_id = od.alcohol_id
+                    left outer join review rv on od.order_detail_id = rv.order_detail_id
+                    where 1 = 1
+                    ${sqlConditions}
+                    ${searchInputPrice[0].isPrice ? `and alcohol_price between ${searchInputPrice[1].value} and ${searchInputPrice[2].value}` : ''}
+                    order by ${sortSelected}`
+                      
+  console.log(sql); // 테스트
   
   return db
   .execute(sql)
