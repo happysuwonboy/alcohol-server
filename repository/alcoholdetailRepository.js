@@ -20,7 +20,7 @@ export async function getAlcoholInfo(alcohol_id) {
 
 export async function getRecommendAlcohols(alcohol_id) {
   return db
-  .execute(`select al.alcohol_id, alcohol_name, alcohol_price, 
+  .execute(`select al.alcohol_id, alcohol_name, alcohol_price, dc_percent, alcohol_img1 as alcohol_img,
             ifnull(review_cnt,0) as review_cnt, ifnull(avg_rate, 0) as avg_rate
             from alcohol al 
             left outer join 
