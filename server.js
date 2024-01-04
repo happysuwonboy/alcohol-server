@@ -2,6 +2,7 @@ import './env.js';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import homeRouter from './router/homeRouter.js';
 import cartRouter from './router/cartRouter.js';
 import paymentRouter from './router/paymentRouter.js';
 import receiptRouter from './router/receiptRouter.js';
@@ -21,11 +22,13 @@ server.use(cors({
 server.use(express.json())
 server.use(express.urlencoded())
 server.use(cookieParser())
+
+server.use('/', homeRouter);
+server.use('/findalcohol', findAlcoholRouter);
+server.use('/alcoholdetail', alcoholdetailRouter)
 server.use('/cart', cartRouter);
 server.use('/payment', paymentRouter);
 server.use('/receipt', receiptRouter);
-server.use('/alcoholdetail', alcoholdetailRouter)
-server.use('/findalcohol', findAlcoholRouter);
 
 
 server.listen(PORT, ()=>{console.log(`listening on ${PORT}...`)})
