@@ -2,6 +2,7 @@ import './env.js';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import alcoholdetailRouter from './router/alcoholdetailRouter.js';
 import findAlcoholRouter from './router/findAlcoholRouter.js';
 
 
@@ -18,6 +19,8 @@ server.use(express.json())
 server.use(express.urlencoded())
 server.use(cookieParser())
 
+
+server.use('/alcoholdetail', alcoholdetailRouter)
 server.use('/findalcohol', findAlcoholRouter);
 
 
