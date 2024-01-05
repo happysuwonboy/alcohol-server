@@ -1,6 +1,6 @@
 import {db} from '../db/database.js';
 
-export async function getFilterList(searchInput, searchInputPrice, filterInfo, sort) {
+export async function getFilterList(searchInput, searchInputPrice, filterInfo, sort, startIndex, endIndex) {
   // where절에 들어갈 쿼리 동적 생성
   let sqlConditions = '';
 
@@ -204,22 +204,47 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
       if(category.isSelected) sqlConditions += ` and ${handleCategoryConditions(category)}`;
     })
   } else { // 술 이름 검색어 입력 진행
-    console.log(searchInput);
     sqlConditions +=  searchInput.length > 0 ? ` and alcohol_name like '%${searchInput}%'` : '';
   }
 
-  // const sql = ` select ac.alcohol_id, alcohol_name, alcohol_price, dc_precent, alcohol_img1, hashtag, review_star
-  // 아래 sql selete문 잘가지고 오는지 테스트
-  const sql = ` select ac.alcohol_id, alcohol_type, dc_percent, cast(alcohol_price - (alcohol_price / dc_percent) as signed) as dc_price, ABV, flavor_sweet, flavor_soda, flavor_sour, alcohol_name, alcohol_price, alcohol_img1, hashtag, review_star, register_date
-                  from alcohol ac
-                    left outer join order_detail od on ac.alcohol_id = od.alcohol_id
-                    left outer join review rv on od.order_detail_id = rv.order_detail_id
-                    where 1 = 1
-                    ${sqlConditions}
-                    ${searchInputPrice[0].isPrice ? `and alcohol_price between ${searchInputPrice[1].value} and ${searchInputPrice[2].value}` : ''}
-                    order by ${sortSelected}`
-                      
-  console.log(sql); // 테스트
+const sql = ` select * from (
+                select
+                    row_number() over (order by ${sortSelected}) as rno,
+                    count(*) over () as total_cnt,
+                    ac.alcohol_id, 
+                    alcohol_name,
+                    alcohol_img1,
+                    hashtag, 
+                    alcohol_price,
+                    dc_percent,
+                    CAST(alcohol_price - (alcohol_price / dc_percent) AS SIGNED) AS dc_price, 
+                    avg_star,
+                    review_cnt
+                from alcohol ac 
+                left outer join( 
+                    select
+                        alcohol_id,
+                        round(avg(review_star), 1) as avg_star,
+                        count(review_id) as review_cnt
+                    from order_detail od 
+                    inner join review re on od.order_detail_id = re.order_detail_id
+                    group by alcohol_id 
+                ) as rv on ac.alcohol_id = rv.alcohol_id
+                where 1 = 1
+                ${sqlConditions}
+                ${searchInputPrice[0].isPrice ? `and alcohol_price between ${searchInputPrice[1].value} and ${searchInputPrice[2].value}` : ''}
+                group by
+                    ac.alcohol_id,
+                    alcohol_price,
+                    alcohol_name,
+                    dc_percent, 
+                    dc_price,
+                    avg_star
+                order by ${sortSelected}
+                    ) as alcohol_list
+                where rno between ${startIndex} and ${endIndex}`
+
+  // console.log(sql); // 테스트
   
   return db
   .execute(sql)
