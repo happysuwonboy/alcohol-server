@@ -35,3 +35,24 @@ export async function getRecommendAlcohols(alcohol_id) {
   .then(result => result[0])
   .catch(err => console.log(err))
 } 
+
+export async function getReviewList({orderBy, colum, alcohol_id}) {
+  const sql = `select review_id, 
+  user_id, 
+  rv.order_detail_id, 
+  review_star, 
+  review_content, 
+  review_img, 
+  date_format(review_date, '%y.%m.%d') as review_date,
+  CHAR_LENGTH(review_content) as detail,
+  alcohol_id 
+  from review as rv inner join order_detail as od
+  where rv.order_detail_id = od.order_detail_id
+  and od.alcohol_id = ?
+  order by ${colum} ${orderBy}`
+
+  return db
+  .execute(sql, [alcohol_id])
+  .then(rows => rows[0])
+  .catch(error => console.log(error));
+};

@@ -14,4 +14,8 @@ export async function getReviewList(req, res) {
   res.json(result);
 };
 
-
+export async function getReviewStart(req, res) {
+  const alcohol_id = req.params.alcohol_id;
+  const result = await homeRepository.getReviewStar(alcohol_id);
+  res.json(result);
+};

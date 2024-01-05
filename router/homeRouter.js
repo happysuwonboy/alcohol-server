@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get('/', homeController.getList);
 router.get('/review', homeController.getReviewList);
+router.get('/:alcohol_id', homeController.getReviewStart);
 
 export default router;

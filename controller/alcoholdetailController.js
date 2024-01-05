@@ -22,3 +22,12 @@ export async function getRecommendAlcohols(req,res) {
     res.status(404).send({message : 'error'})
   }
 }
+
+export async function getReviewList(req, res) {
+  const orderBy = req.query.orderBy;
+  const colum = req.query.colum;
+  const alcohol_id = req.params.alcohol_id;
+  console.log(orderBy, colum);
+  const result = await alcoholdetailRepository.getReviewList({orderBy, colum, alcohol_id});
+  res.json(result);
+};
