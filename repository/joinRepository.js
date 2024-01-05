@@ -13,12 +13,25 @@ export async function getIdCheck(id) {
 }
 
 export async function createUser(userid, name, password, birthdate, email, phone, fullAddress) {
-  const sql = `
+  const userSql = `
     INSERT INTO user (user_id, user_name, user_passwd, birthday, user_email, user_phone, address, join_date)
     VALUES (?, ?, ?, ?, ?, ?, ?, sysdate())
   `;
-  return db
-        .execute(sql, [userid, name, password, birthdate, email, phone, fullAddress])
-        .then((result) => 'ok');
+  
+  const receiptSql = `
+    INSERT INTO receipt (user_id, rec_name, rec_phone, rec_address)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  const userValues = [userid, name, password, birthdate, email, phone, fullAddress];
+  const receiptValues = [userid, name, phone, fullAddress];
+
+  // Execute the first SQL statement
+  await db.execute(userSql, userValues);
+
+  // Execute the second SQL statement
+  await db.execute(receiptSql, receiptValues);
+
+  return 'ok';
 }
 
