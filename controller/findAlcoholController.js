@@ -12,7 +12,6 @@ import * as findAlcoholRepository from '../repository/findAlcoholRepository.js';
  */
 export async function getFilterList(req, res) {
   const { searchInput, searchInputPrice, filterInfo, sort, currentPage } = req.body;
-  console.log(currentPage);
   const endIndex = currentPage * 12;
   const startIndex = endIndex - 11;
   const rows = await findAlcoholRepository.getFilterList(searchInput, searchInputPrice, filterInfo, sort, startIndex, endIndex);
