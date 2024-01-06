@@ -1,4 +1,6 @@
 import {db} from '../db/database.js';
+import bcrypt from 'bcrypt';
+
 
 export async function getIdCheck(id) {
   const sql = 'SELECT COUNT(user_id) AS cnt FROM user WHERE user_id = ?';
@@ -13,6 +15,9 @@ export async function getIdCheck(id) {
 }
 
 export async function createUser(userid, name, password, birthdate, email, phone, fullAddress) {
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  
   const userSql = `
     INSERT INTO user (user_id, user_name, user_passwd, birthday, user_email, user_phone, address, join_date)
     VALUES (?, ?, ?, ?, ?, ?, ?, sysdate())
@@ -23,7 +28,7 @@ export async function createUser(userid, name, password, birthdate, email, phone
     VALUES (?, ?, ?, ?)
   `;
 
-  const userValues = [userid, name, password, birthdate, email, phone, fullAddress];
+  const userValues = [userid, name, hashedPassword, birthdate, email, phone, fullAddress];
   const receiptValues = [userid, name, phone, fullAddress];
 
   // Execute the first SQL statement
