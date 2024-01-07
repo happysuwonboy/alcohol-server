@@ -3,6 +3,6 @@ import express  from 'express';
 
 const router = express.Router();
 
-router.get('/product', adminPageController.getAlcoholList);
+router.get('/product/:page', adminPageController.getAlcoholList);
 
 export default router;
