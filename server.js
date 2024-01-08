@@ -30,7 +30,7 @@ server.use(cookieParser())
 server.use('/home', homeRouter);
 server.use('/getimg', imgRouter)
 server.use('/findalcohol', findAlcoholRouter);
-server.use('/alcoholdetail', alcoholdetailRouter)
+server.use('/alcoholdetail', alcoholdetailRouter);
 server.use('/cart', cartRouter);
 server.use('/payment', paymentRouter);
 server.use('/receipt', receiptRouter);
