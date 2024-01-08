@@ -10,6 +10,7 @@ import receiptRouter from './router/receiptRouter.js';
 import alcoholdetailRouter from './router/alcoholdetailRouter.js';
 import findAlcoholRouter from './router/findAlcoholRouter.js';
 import joinRouter from './router/joinRouter.js';
+import loginRouter from './router/loginRouter.js';
 import adminPageRouter from './router/adminPageRouter.js';
 
 const server = express();
@@ -33,6 +34,7 @@ server.use('/cart', cartRouter);
 server.use('/payment', paymentRouter);
 server.use('/receipt', receiptRouter);
 server.use('/join', joinRouter);
+server.use('/login', loginRouter);
 server.use('/adminpage', adminPageRouter);
 
 server.listen(PORT, ()=>{console.log(`listening on ${PORT}...`)})

@@ -2,7 +2,7 @@ import * as repository from '../repository/joinRepository.js';
 
 export async function getIdCheck(req, res) {
   const id = req.params.id;
-
+  
   if (!id) {
     return res.status(400).json({ error: 'ID parameter is missing' });
   }
