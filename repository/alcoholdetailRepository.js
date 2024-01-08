@@ -36,23 +36,36 @@ export async function getRecommendAlcohols(alcohol_id) {
   .catch(err => console.log(err))
 } 
 
-export async function getReviewList({orderBy, colum, alcohol_id}) {
-  const sql = `select review_id, 
+export async function getReviewList({orderBy, colum, alcohol_id, startIndex, endIndex}) {
+  const sql = `select 
+  no, 
+  review_id, 
+  user_id, 
+  order_detail_id, 
+  review_star, 
+  review_content, 
+  review_img, 
+  alcohol_id, 
+  review_date, 
+  detail
+  from (select row_number() over (order by review_id) as no,
+  review_id, 
   user_id, 
   rv.order_detail_id, 
   review_star, 
   review_content, 
   review_img, 
   date_format(review_date, '%y.%m.%d') as review_date,
-  CHAR_LENGTH(review_content) as detail,
+  char_length(review_content) as detail,
   alcohol_id 
   from review as rv inner join order_detail as od
   where rv.order_detail_id = od.order_detail_id
   and od.alcohol_id = ?
-  order by ${colum} ${orderBy}`
+  order by ${colum} ${orderBy}) as reviewlist
+  where no between ? and ?`
 
   return db
-  .execute(sql, [alcohol_id])
+  .execute(sql, [alcohol_id, startIndex, endIndex])
   .then(rows => rows[0])
   .catch(error => console.log(error));
 };

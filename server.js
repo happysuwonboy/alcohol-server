@@ -10,6 +10,7 @@ import receiptRouter from './router/receiptRouter.js';
 import alcoholdetailRouter from './router/alcoholdetailRouter.js';
 import findAlcoholRouter from './router/findAlcoholRouter.js';
 import joinRouter from './router/joinRouter.js';
+import myPageRouter from './router/myPageRouter.js';
 
 const server = express();
 const PORT = 8000;
@@ -24,7 +25,7 @@ server.use(express.json())
 server.use(express.urlencoded())
 server.use(cookieParser())
 
-server.use('/', homeRouter);
+server.use('/home', homeRouter);
 server.use('/getimg', imgRouter)
 server.use('/findalcohol', findAlcoholRouter);
 server.use('/alcoholdetail', alcoholdetailRouter)
@@ -32,5 +33,6 @@ server.use('/cart', cartRouter);
 server.use('/payment', paymentRouter);
 server.use('/receipt', receiptRouter);
 server.use('/join', joinRouter);
+server.use('/mypage', myPageRouter);
 
 server.listen(PORT, ()=>{console.log(`listening on ${PORT}...`)})

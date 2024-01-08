@@ -26,8 +26,11 @@ export async function getRecommendAlcohols(req,res) {
 export async function getReviewList(req, res) {
   const orderBy = req.query.orderBy;
   const colum = req.query.colum;
+  const page = req.query.page;
+  const pageItem = req.query.pageItem;
+  const startIndex = (page - 1) * pageItem + 1;
+  const endIndex = startIndex + 1
   const alcohol_id = req.params.alcohol_id;
-  console.log(orderBy, colum);
-  const result = await alcoholdetailRepository.getReviewList({orderBy, colum, alcohol_id});
+  const result = await alcoholdetailRepository.getReviewList({orderBy, colum, alcohol_id, startIndex, endIndex});
   res.json(result);
 };
