@@ -1,12 +1,8 @@
 import express from 'express';
-import * as mypageController from '../controller/mypageController.js';
+import * as controller from '../controller/myPageController.js';
 
 const router = express.Router();
 
-router.get('/review/:userid', mypageController.getMyReview);
-router.get('/order/:userId', mypageController.getOrders);
-
+router.get('/review/:userid', controller.getMyReview);
 
 export default router;
-
-
