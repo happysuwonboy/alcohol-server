@@ -1,8 +1,13 @@
 import {db} from '../db/database.js';
 
 export async function getLogin(id){
-  const sql = `select count(user_passwd) as cnt, ANY_VALUE(user_passwd) as user_passwd 
-                  from user where user_id=?`;
+  const sql = `    SELECT 
+  COUNT(user_passwd) AS cnt, 
+  ANY_VALUE(user_passwd) AS user_passwd,
+  ANY_VALUE(user_role) AS user_role 
+FROM user 
+WHERE user_id=?
+`;
 
   return db
         .execute(sql, [id])
