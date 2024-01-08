@@ -1,14 +1,4 @@
-import * as repository from '../repository/myPageRepository.js';
-
-export async function getMyReview(req, res) {
-  const userid = req.params.userid;
-  const page = req.query.page;
-  const pageItem = req.query.pageItem;
-  const startIndex = (page - 1) * pageItem + 1;
-  const endIndex = startIndex + 1;
-  const result = await repository.getMyReview({userid, startIndex, endIndex});
-  res.json(result);
-};
+import * as mypageRepository from '../repository/mypageRepository.js'
 
 /**
  * 주문 내역 조회
@@ -40,3 +30,13 @@ export async function getOrders(req, res) {
         res.json(orderData);
     }
 }
+
+export async function getMyReview(req, res) {
+  const userid = req.params.userid;
+  const page = req.query.page;
+  const pageItem = req.query.pageItem;
+  const startIndex = (page - 1) * pageItem + 1;
+  const endIndex = startIndex + 1;
+  const result = await repository.getMyReview({userid, startIndex, endIndex});
+  res.json(result);
+};
