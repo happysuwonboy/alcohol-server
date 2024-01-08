@@ -1,5 +1,10 @@
 import {db} from '../db/database.js';
 
+/**
+ * 
+ * @param {*} param 
+ * @returns rows 데이터
+ */
 export async function getAlcoholList({startIndex, endIndex}) {
   return db
   .execute(`select * from (
@@ -29,4 +34,4 @@ export async function getAlcoholList({startIndex, endIndex}) {
               from alcohol ) as alcohol_result
               where rno between ${startIndex} and ${endIndex}`)
   .then(rows => rows[0]);
-}
+};
