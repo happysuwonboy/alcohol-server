@@ -13,3 +13,42 @@ export async function getOrderAlcoholInfo({userId, checked}) {
         .execute(sql, [userId])
         .then(result => result[0]);
 }
+
+/**
+ * 주문 내역 추가
+ */
+export async function insertOrderInfo({userId, recId, totalOrderPrice}) {
+    const sql = `INSERT INTO order_info(user_id, rec_id, order_date, total_price)
+	            VALUES(?,?,now(),?)`;
+    return db
+        .execute(sql, [userId, recId, totalOrderPrice])
+        .then(result => 'ok');
+}
+/**
+ * 주문 상세 내역 추가
+ */
+export async function insertOrderDetail({alcoholId, alcoholQty}) {
+    const sql = `INSERT INTO order_detail(order_id, alcohol_id, order_qty, register_review)
+	            VALUES((SELECT order_id FROM order_info ORDER BY order_id DESC LIMIT 1),?,?,0)`;
+    return db
+        .execute(sql, [alcoholId, alcoholQty])
+        .then(result => 'ok');
+}
+/**
+ * 상품 재고 update
+ */
+export async function decreaseAlcoholStock({alcoholId, alcoholQty}) {
+    const sql = `UPDATE alcohol SET stock = (stock - ?) where alcohol_id = ?`;
+    return db
+        .execute(sql, [alcoholQty, alcoholId])
+        .then(result => 'ok');
+}
+/**
+ * 장바구니에서 삭제
+ */
+export async function deleteCart({alcoholId}) {
+    const sql = `DELETE FROM cart WHERE alcohol_id = ?`;
+    return db
+        .execute(sql, [alcoholId])
+        .then(result => 'ok');
+}

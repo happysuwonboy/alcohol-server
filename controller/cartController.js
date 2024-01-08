@@ -4,9 +4,9 @@ import * as cartRepository from '../repository/cartRepository.js'
  * 회원의 장바구니 리스트 조회
  */ 
 export async function getCartList(req, res) {
-  const userId = req.params.userId;
-  const row = await cartRepository.getCartList(userId);
-  res.json(row);
+    const userId = req.params.userId;
+    const row = await cartRepository.getCartList(userId);
+    res.json(row);
 }
 
 /**
