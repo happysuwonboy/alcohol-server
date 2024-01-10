@@ -22,9 +22,7 @@ export async function getAlcoholList(req, res) {
  */
 export async function getImgDuplicate(req, res) {
   const {foodImages}  = req.body;
-  console.log(foodImages);
   const serverImages = await fs.readdir('assets/images/food_img');
-  console.log(serverImages);
   // 중복 체크
   const duplicateImages = [];
   foodImages.forEach((name, idx) => {
@@ -40,13 +38,25 @@ export async function getImgDuplicate(req, res) {
   };
 };
 
+/**
+ * createProduct : 관리자가 작성한 상품 등록 insert
+ * @param {*} req 
+ * @param {*} res 
+ * @return 등록 처리 결과 메세지
+ */
 export async function createProduct(req, res) {
   const productForm = req.body;
-  console.log(req.files);
-  const foodImg = req.files?.food_img || [];
-  const alcohol = req.files?.alcohol_img || [];
+  const alcoholFiles = req.files?.alcohol_img || [];
+  const alcoholImges = alcoholFiles.map(img => img.filename); 
   
-  console.log(productForm);
-  console.log(alcohol);
-  console.log(foodImg)
+  try {
+    const result = await  adminPageRepository.createProduct({productForm, alcoholImges});
+    if(result === 'insert ok') {
+      return res.json(result);
+    } else {
+      return res.staus(404).send({message: '상품 등록에 실패하였습니다'})
+    }
+  } catch {
+    return res.staus(500).send({message: '서버 오류 발생'})
+  }
 }
