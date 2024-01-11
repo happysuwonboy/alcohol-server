@@ -45,6 +45,7 @@ router.get('/product/:page', adminPageController.getAlcoholList);
 router.post('/product/create', ImgUploadMiddleware, adminPageController.createProduct);
 router.get('/update/:alcoholId', adminPageController.getAlcoholInfo);
 router.post('/update/modify/:alcoholId', ImgUploadMiddleware, adminPageController.updateProduct);
-router.post('/imgduplicate', adminPageController.getImgDuplicate);
+router.post('/delete', adminPageController.removeProduct);
+router.post('/imgduplicate', adminPageController.getImgDuplicate); // food 이미지 서버 중복체크
 
 export default router;

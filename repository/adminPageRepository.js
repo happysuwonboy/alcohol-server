@@ -71,9 +71,28 @@ export async function getAlcoholInfo(alcoholId) {
  */
 export async function updateProduct(productForm) {
   const {alcohol_id, alcohol_name, alcohol_price, dc_percent, alcohol_type, abv, alcohol_volume, food, alcohol_img, alcohol_comment1, alcohol_comment2, flavor_sour, flavor_soda, flavor_sweet, flavor_body, hashtag, stock} = productForm;
-  const sql =  `update alcohol set alcohol_name=?, alcohol_price=?, dc_percent=?, alcohol_type=?, ABV=?, alcohol_volume=?, food=?, alcohol_comment1=?, alcohol_comment2=?, alcohol_img1=?, alcohol_img2=?, alcohol_img3=?, flavor_sour=?, flavor_soda=?, flavor_sweet=?, flavor_body=?, hashtag=?, stock=? where alcohol_id=?`
+  const sql = `update alcohol set alcohol_name=?, alcohol_price=?, dc_percent=?, alcohol_type=?, ABV=?, alcohol_volume=?, food=?, alcohol_comment1=?, alcohol_comment2=?, alcohol_img1=?, alcohol_img2=?, alcohol_img3=?, flavor_sour=?, flavor_soda=?, flavor_sweet=?, flavor_body=?, hashtag=?, stock=? where alcohol_id=?`
 
   return db
     .execute(sql, [ alcohol_name, alcohol_price, dc_percent, alcohol_type, abv, alcohol_volume, food, alcohol_comment1, alcohol_comment2, alcohol_img[0], alcohol_img[1], alcohol_img[2], flavor_sour, flavor_soda, flavor_sweet, flavor_body, hashtag, stock, alcohol_id ])
     .then(result => 'update ok');
+};
+
+/**
+ * removeProduct : 선택한 상품 삭제 ( 여러개 가능 )
+ * @param {*} checkedId 
+ * @returns delete ok
+ */
+export async function removeProduct(checkedId) {
+  let sqlConditions = ''; // 조건에 들어갈 Id
+  
+  if(checkedId.length === 1) { // 삭제 상품이 하나일 경우
+    sqlConditions = checkedId[0]; 
+  } else { // 삭제 상품이 하나가 아닐 경우 : ''로 감싼 뒤 ,로 연결
+    sqlConditions = checkedId.map(id => `'${id}'`).join(', ');
+  }
+  
+  return db
+    .execute(`delete from alcohol where alcohol_id in(${sqlConditions})`)
+    .then(result => 'delete ok')
 };

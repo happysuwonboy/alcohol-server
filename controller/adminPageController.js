@@ -61,7 +61,6 @@ export async function createProduct(req, res) {
   }
 };
 
-
 /**
  * getAlcoholInfo: 클릭한 상품의 정보 조회 ( 모든 정보 )
  * @param {*} req 
@@ -72,7 +71,6 @@ export async function getAlcoholInfo(req, res) {
   const row = await adminPageRepository.getAlcoholInfo(alcoholId);
   res.json(row);
 };
-
 
 /**
  * * updateProduct : 클릭한 상품의 수정 update ( 사진 포함 )
@@ -101,3 +99,14 @@ export async function updateProduct(req, res) {
   const result = await adminPageRepository.updateProduct(productForm);
   res.json(result);
 };
+
+/**
+ * * removeProduct : 선택한 상품 삭제 ( 여러개 가능 )
+ * @param {*} req 
+ * @param {*} res 
+ */
+export async function removeProduct(req, res) {
+  const { checkedId } = req.body;
+  const result = await adminPageRepository.removeProduct(checkedId);
+  res.json(result);
+}
