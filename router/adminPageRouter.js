@@ -12,7 +12,7 @@ const ImgUpload = multer({
       let uploadPath = path.join(path.resolve(), 'assets', 'images');
 
       // 조건문을 사용하여 필드에 따라 저장 경로 결정
-      if (file.fieldname === 'alcohol_img') {
+      if (file.fieldname.includes('alcohol_img')) {
         uploadPath = path.join(uploadPath, 'alcohol_img');
       } else if (file.fieldname === 'food_img') {
         uploadPath = path.join(uploadPath, 'food_img');
@@ -23,7 +23,7 @@ const ImgUpload = multer({
       let fileName;
 
       // 조건문을 사용하여 필드에 따라 파일 이름 결정
-      if (file.fieldname === 'alcohol_img') {
+      if (file.fieldname.includes('alcohol_img')) {
         const randomId = uuid();
         const ext = path.extname(file.originalname);
         fileName = randomId + ext;
@@ -38,11 +38,13 @@ const ImgUpload = multer({
   })
 });
 
-const ImgUploadMiddleware = ImgUpload.fields([{ name: 'food_img', maxCount: 3 }, { name: 'alcohol_img', maxCount: 3 }]);
+const ImgUploadMiddleware = ImgUpload.fields([{ name: 'food_img', maxCount: 3 }, { name: 'alcohol_img0' }, { name: 'alcohol_img1' }, { name: 'alcohol_img2' }]);
 
 
 router.get('/product/:page', adminPageController.getAlcoholList);
-router.post('/product', ImgUploadMiddleware, adminPageController.createProduct);
+router.post('/product/create', ImgUploadMiddleware, adminPageController.createProduct);
+router.get('/update/:alcoholId', adminPageController.getAlcoholInfo);
+router.post('/update/modify/:alcoholId', ImgUploadMiddleware, adminPageController.updateProduct);
 router.post('/imgduplicate', adminPageController.getImgDuplicate);
 
 export default router;

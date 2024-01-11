@@ -11,7 +11,7 @@ export async function getAlcoholList(req, res) {
   const page = req.params.page;
   const endIndex = page * 10;
   const startIndex = endIndex -9;
-  const rows = await adminPageRepository.getAlcoholList({startIndex, endIndex});
+  const rows = await adminPageRepository.getAlcoholList(startIndex, endIndex);
   res.json(rows);
 };
 
@@ -50,7 +50,7 @@ export async function createProduct(req, res) {
   const alcoholImges = alcoholFiles.map(img => img.filename); 
   
   try {
-    const result = await  adminPageRepository.createProduct({productForm, alcoholImges});
+    const result = await  adminPageRepository.createProduct(productForm, {alcoholImges});
     if(result === 'insert ok') {
       return res.json(result);
     } else {
@@ -59,4 +59,45 @@ export async function createProduct(req, res) {
   } catch {
     return res.staus(500).send({message: '서버 오류 발생'})
   }
-}
+};
+
+
+/**
+ * getAlcoholInfo: 클릭한 상품의 정보 조회 ( 모든 정보 )
+ * @param {*} req 
+ * @param {*} res 
+ */
+export async function getAlcoholInfo(req, res) {
+  const {alcoholId} = req.params;
+  const row = await adminPageRepository.getAlcoholInfo(alcoholId);
+  res.json(row);
+};
+
+
+/**
+ * * updateProduct : 클릭한 상품의 수정 update ( 사진 포함 )
+ * @param {*} req 
+ * @param {*} res 
+ */
+export async function updateProduct(req, res) {
+
+  // 수정시 파일 객체와 이름만 있는 데이터가 따로 들어오고 메인사진과 상세사진 순서 바뀌지 않도록 추출 필요
+  let alcoholImges = [];
+  for(let i = 0; i < 3; i++) {
+    const file = req.files[`alcohol_img${i}`] // 파일 객체
+    const bodyFile = req.body[`alcohol_img${i}`]; // formData로 넘어온 파일 이름
+
+    if(file) {
+      alcoholImges.push(file[0].filename) // 해당하는 번호의 파일 객체가 있으면 배열에 넣기
+    } else if(bodyFile) {
+      alcoholImges.push(bodyFile) // 해당하는 번호의 파일 이름이 있으면 배열에 넣기
+    }
+  }
+
+  const productForm = {
+    ...req.body,
+    alcohol_img : alcoholImges
+  }
+  const result = await adminPageRepository.updateProduct(productForm);
+  res.json(result);
+};
