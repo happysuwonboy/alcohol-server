@@ -1,15 +1,41 @@
 import {db} from '../db/database.js';
 
 /**
- * 
- * @param {*} param 
+ * getAlcoholList : 상품 목록 조회 ( 페이지네이션 ) ﹒ 검색어 입력 목록 조회 ﹒ sort 정렬 조회
+ * @param {*} 페이지네이션 rno 번호, 검색어
  * @returns rows 데이터
  */
-export async function getAlcoholList(startIndex, endIndex) {
+export async function getAlcoholList(startIndex, endIndex, searchInput, seletedSort) {
+  let sortQuery = 'order by ';
+
+  switch(seletedSort) {
+    case 'register_date':
+      sortQuery += 'register_date';
+      break;
+    case 'low_stock':
+      sortQuery += 'stock';
+      break;
+    case 'high_stock':
+      sortQuery += 'stock desc';
+      break;
+    case 'low_percent':
+      sortQuery += 'dc_percent';
+      break;
+    case 'high_percent':
+      sortQuery += 'dc_percent desc';
+      break;
+    case 'low_price':
+      sortQuery += 'alcohol_price';
+      break;
+    case 'hign_price':
+      sortQuery += 'alcohol_price desc';
+      break;
+  };
+
   return db
     .execute(`select * from (
                 select
-                  row_number() over (order by register_date) as rno,
+                  row_number() over (${sortQuery}) as rno,
                   count(*) over () as total_cnt,
                   alcohol_id,
                   alcohol_name, 
@@ -31,7 +57,9 @@ export async function getAlcoholList(startIndex, endIndex) {
                   flavor_body,
                   hashtag,
                   stock
-                from alcohol ) as alcohol_result
+                from alcohol 
+                ${ searchInput ?  `where alcohol_name like '%${searchInput}%'` : '' }
+                ${sortQuery}) as alcohol_result
                 where rno between ${startIndex} and ${endIndex}`)
     .then(rows => rows[0]);
 };

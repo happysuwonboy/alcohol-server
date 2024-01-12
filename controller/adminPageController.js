@@ -3,15 +3,15 @@ import * as fs from 'fs/promises';
 
 
 /**
- * getAlcoholList : 상품 목록 조회 ( 페이지네이션 )
+ * getAlcoholList : 상품 목록 조회 ( 페이지네이션 ) ﹒ 검색어 입력 목록 조회
  * @param {*} req 
  * @param {*} res 
  */
 export async function getAlcoholList(req, res) {
-  const page = req.params.page;
+  const { page, searchInput, seletedSort } = req.body;
   const endIndex = page * 10;
   const startIndex = endIndex -9;
-  const rows = await adminPageRepository.getAlcoholList(startIndex, endIndex);
+  const rows = await adminPageRepository.getAlcoholList(startIndex, endIndex, searchInput, seletedSort);
   res.json(rows);
 };
 

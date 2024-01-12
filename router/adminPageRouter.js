@@ -41,7 +41,7 @@ const ImgUpload = multer({
 const ImgUploadMiddleware = ImgUpload.fields([{ name: 'food_img', maxCount: 3 }, { name: 'alcohol_img0' }, { name: 'alcohol_img1' }, { name: 'alcohol_img2' }]);
 
 
-router.get('/product/:page', adminPageController.getAlcoholList);
+router.post('/product/search', adminPageController.getAlcoholList); // 기본 리스트 조회 및 검색어 조회
 router.post('/product/create', ImgUploadMiddleware, adminPageController.createProduct);
 router.get('/update/:alcoholId', adminPageController.getAlcoholInfo);
 router.post('/update/modify/:alcoholId', ImgUploadMiddleware, adminPageController.updateProduct);
