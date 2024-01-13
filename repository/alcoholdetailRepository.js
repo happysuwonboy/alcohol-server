@@ -36,7 +36,19 @@ export async function getRecommendAlcohols(alcohol_id) {
   .catch(err => console.log(err))
 } 
 
-export async function getReviewList({orderBy, colum, alcohol_id, startIndex, endIndex}) {
+export async function getReviewList({selectOption, alcohol_id, startIndex, endIndex}) {
+  let orderBy = '';
+
+  if(selectOption === 'detail') {
+    orderBy = 'char_length(review_content) desc'
+  } else if (selectOption === 'newest') {
+    orderBy = 'review_date desc'
+  } else if (selectOption === 'desc') {
+    orderBy = 'review_star desc'
+  } else {
+    orderBy = 'review_star'
+  }
+
   const sql = `select 
   no, 
   review_id, 
@@ -47,8 +59,8 @@ export async function getReviewList({orderBy, colum, alcohol_id, startIndex, end
   review_img, 
   alcohol_id, 
   review_date, 
-  detail
-  from (select row_number() over (order by review_id) as no,
+  char_length(review_content)
+  from (select row_number() over (order by ${orderBy}) as no,
   review_id, 
   user_id, 
   rv.order_detail_id, 
@@ -56,12 +68,12 @@ export async function getReviewList({orderBy, colum, alcohol_id, startIndex, end
   review_content, 
   review_img, 
   date_format(review_date, '%y.%m.%d') as review_date,
-  char_length(review_content) as detail,
+  char_length(review_content),
   alcohol_id 
   from review as rv inner join order_detail as od
   where rv.order_detail_id = od.order_detail_id
   and od.alcohol_id = ?
-  order by ${colum} ${orderBy}) as reviewlist
+  order by ${orderBy}) as reviewlist
   where no between ? and ?`
 
   return db
