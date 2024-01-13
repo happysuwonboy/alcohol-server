@@ -7,12 +7,12 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
   // 선택한 정렬
   let sortSelected = '';
   if(sort === 'register_date') {
-    sortSelected = 'ac.register_date';
+    sortSelected = 'ac.register_date desc';
   } else if(sort === 'low_price') {
     sortSelected = 'ac.alcohol_price';
   } else {
     sortSelected = 'ac.alcohol_price desc';
-  }
+  };
 
   // 3) 해당하는 카테고리의 선택 체크박스 옵션 : 주류
   const handleCategory1 = (category) => {
@@ -36,13 +36,11 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
           case 'gitajulyu':  // 기타주류
             conditions.push(`ac.alcohol_type = '기타주류'`);
             break;
-          // default:
-          // 생각 중
         }
       }
     });
     return conditions.join(' or ');
-  }
+  };
 
   // 3) 해당하는 카테고리의 선택 체크박스 옵션 : 도수
   const handleCategory2 = (category) => {
@@ -63,13 +61,11 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
           case 'abv_4' : 
           conditions.push(`cast(ac.ABV as decimal(10, 2)) >= 30`);
             break;
-            // default:
-            // 생각 중
         }
       }
     });
     return conditions.join(' or ');
-  }
+  };
 
   // 3) 해당하는 카테고리의 선택 체크박스 옵션 : 단맛
   const handleCategory3 = (category) => {
@@ -87,13 +83,11 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
           case 'sweet_3' : 
             conditions.push(`ac.flavor_sweet between 4 and 5`);
             break;
-            // default:
-            // 생각 중
         }
       }
     });
     return conditions.join(' or ');
-  }
+  };
 
   // 3) 해당하는 카테고리의 선택 체크박스 옵션 : 신맛
   const handleCategory4 = (category) => {
@@ -111,13 +105,11 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
           case 'sour_3' : 
             conditions.push(`ac.flavor_sour between 4 and 5`);
             break;
-            // default:
-            // 생각 중
         }
       }
     });
     return conditions.join(' or ');
-  }
+  };
 
   // 3) 해당하는 카테고리의 선택 체크박스 옵션 : 탄산
   const handleCategory5 = (category) => {
@@ -141,7 +133,7 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
       }
     });
     return conditions.join(' or ');
-  }
+  };
 
   // 3)  해당하는 카테고리의 선택 체크박스 옵션 : 가격
   const handleCategory6 = (category) => {
@@ -165,13 +157,11 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
             case 'price_5' : 
             condition.push(`ac.alcohol_price >= 100000`);
             break;
-            // default:
-            // 생각 중
         }
       }
     });
     return condition.join(' or ');
-  }
+  };
 
 
   // 2) 해당하는 카테고리 분류
@@ -191,10 +181,8 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
       return condition += `(${handleCategory5(category)})`;
       case 6 : // 가격
       return condition += `(${handleCategory6(category)})`;
-      // default:
-      // return '';
     }
-  }
+  };
 
   // 1) 모든 카테고리 중 체크박스 선택 여부 판단 ( 하나라도 있는지 ) 및 최종 쿼리 연산자 적용
   const isCategorySeleted = filterInfo.some(category => category.isSelected);
@@ -204,6 +192,7 @@ export async function getFilterList(searchInput, searchInputPrice, filterInfo, s
       if(category.isSelected) sqlConditions += ` and ${handleCategoryConditions(category)}`;
     })
   } else { // 술 이름 검색어 입력 진행
+    searchInput = searchInput.trim();
     sqlConditions +=  searchInput.length > 0 ? ` and alcohol_name like '%${searchInput}%'` : '';
   }
 
@@ -219,7 +208,8 @@ const sql = ` select * from (
                     dc_percent,
                     CAST(alcohol_price - (alcohol_price / dc_percent) AS SIGNED) AS dc_price, 
                     avg_star,
-                    review_cnt
+                    review_cnt,
+                    stock
                 from alcohol ac 
                 left outer join( 
                     select
@@ -228,8 +218,7 @@ const sql = ` select * from (
                         count(review_id) as review_cnt
                     from order_detail od 
                     inner join review re on od.order_detail_id = re.order_detail_id
-                    group by alcohol_id 
-                ) as rv on ac.alcohol_id = rv.alcohol_id
+                    group by alcohol_id ) as rv on ac.alcohol_id = rv.alcohol_id
                 where 1 = 1
                 ${sqlConditions}
                 ${searchInputPrice[0].isPrice ? `and alcohol_price between ${searchInputPrice[1].value} and ${searchInputPrice[2].value}` : ''}
@@ -244,9 +233,7 @@ const sql = ` select * from (
                     ) as alcohol_list
                 where rno between ${startIndex} and ${endIndex}`
 
-  // console.log(sql); // 테스트
-  
   return db
   .execute(sql)
   .then(rows => rows[0]);
-}
+};

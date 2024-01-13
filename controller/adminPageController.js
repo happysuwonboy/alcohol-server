@@ -46,9 +46,12 @@ export async function getImgDuplicate(req, res) {
  */
 export async function createProduct(req, res) {
   const productForm = req.body;
-  const alcoholFiles = req.files?.alcohol_img || [];
-  const alcoholImges = alcoholFiles.map(img => img.filename); 
-  
+  let alcoholImges = [];
+  for(let i = 0; i < 3; i++) {
+    const file = req.files[`alcohol_img${i}`] ;
+    alcoholImges.push(file[0].filename);
+  }
+
   try {
     const result = await  adminPageRepository.createProduct(productForm, {alcoholImges});
     if(result === 'insert ok') {
@@ -86,9 +89,9 @@ export async function updateProduct(req, res) {
     const bodyFile = req.body[`alcohol_img${i}`]; // formData로 넘어온 파일 이름
 
     if(file) {
-      alcoholImges.push(file[0].filename) // 해당하는 번호의 파일 객체가 있으면 배열에 넣기
+      alcoholImges.push(file[0].filename); // 해당하는 번호의 파일 객체가 있으면 배열에 넣기
     } else if(bodyFile) {
-      alcoholImges.push(bodyFile) // 해당하는 번호의 파일 이름이 있으면 배열에 넣기
+      alcoholImges.push(bodyFile); // 해당하는 번호의 파일 이름이 있으면 배열에 넣기
     }
   }
 

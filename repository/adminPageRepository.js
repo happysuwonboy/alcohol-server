@@ -6,11 +6,12 @@ import {db} from '../db/database.js';
  * @returns rows 데이터
  */
 export async function getAlcoholList(startIndex, endIndex, searchInput, seletedSort) {
+  searchInput && (searchInput = searchInput.trim());
   let sortQuery = 'order by ';
 
   switch(seletedSort) {
     case 'register_date':
-      sortQuery += 'register_date';
+      sortQuery += 'register_date desc';
       break;
     case 'low_stock':
       sortQuery += 'stock';
@@ -98,7 +99,7 @@ export async function getAlcoholInfo(alcoholId) {
  * @returns 
  */
 export async function updateProduct(productForm) {
-  const {alcohol_id, alcohol_name, alcohol_price, dc_percent, alcohol_type, abv, alcohol_volume, food, alcohol_img, alcohol_comment1, alcohol_comment2, flavor_sour, flavor_soda, flavor_sweet, flavor_body, hashtag, stock} = productForm;
+  const { alcohol_id, alcohol_name, alcohol_price, dc_percent, alcohol_type, abv, alcohol_volume, food, alcohol_img, alcohol_comment1, alcohol_comment2, flavor_sour, flavor_soda, flavor_sweet, flavor_body, hashtag, stock } = productForm;
   const sql = `update alcohol set alcohol_name=?, alcohol_price=?, dc_percent=?, alcohol_type=?, ABV=?, alcohol_volume=?, food=?, alcohol_comment1=?, alcohol_comment2=?, alcohol_img1=?, alcohol_img2=?, alcohol_img3=?, flavor_sour=?, flavor_soda=?, flavor_sweet=?, flavor_body=?, hashtag=?, stock=? where alcohol_id=?`
 
   return db
@@ -115,7 +116,7 @@ export async function removeProduct(checkedId) {
   let sqlConditions = ''; // 조건에 들어갈 Id
   
   if(checkedId.length === 1) { // 삭제 상품이 하나일 경우
-    sqlConditions = checkedId[0]; 
+    sqlConditions = `'${checkedId[0]}'`; 
   } else { // 삭제 상품이 하나가 아닐 경우 : ''로 감싼 뒤 ,로 연결
     sqlConditions = checkedId.map(id => `'${id}'`).join(', ');
   }
