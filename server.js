@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
   socket.on('joinChatRoom', (chatRoomId) => {
     if (!chatRooms[chatRoomId]) {
       chatRooms[chatRoomId] = { messages: [], connectedSockets: [socket.id] };
-      console.log(`${chatRoomId} has been created`);
+      console.log(`[${chatRoomId}] has been created`);
       io.to('admin').emit('getChatRooms', getChatRooms(chatRooms));
     } else {
       chatRooms[chatRoomId].connectedSockets.push(socket.id);
@@ -114,14 +114,21 @@ io.on('connection', (socket) => {
       const leaveSocketIdx = chatRoomConnects.indexOf(socket.id);
       chatRoomConnects.splice(leaveSocketIdx, 1);
       socket.leave(chatRoomId);
-      io.to(chatRoomId).emit(
-        'getConnectedSockets',
-        chatRooms[chatRoomId].connectedSockets
-      );
+      const connectedUserCount = chatRoomConnects.length;
+      if (connectedUserCount) {
+        io.to(chatRoomId).emit(
+          'getConnectedSockets',
+          chatRooms[chatRoomId].connectedSockets
+        );
+      } else {
+        delete chatRooms[chatRoomId];
+        io.to('admin').emit('getChatRooms', getChatRooms(chatRooms));
+        console.log(`[${chatRoomId}] has been deleted`);
+      }
     } else { // 일반유저
 
       // 나중에 추가할수도 있음
-      
+
     }
   })
 
@@ -154,9 +161,10 @@ io.on('connection', (socket) => {
         console.log(`[${socket.id}] has left ${chatRoomId}`);
         if (connectedUserCount === 0) {
           delete chatRooms[chatRoomId];
-          console.log(`${chatRoomId} has been deleted`);
+          console.log(`[${chatRoomId}] has been deleted`);
+          io.to('admin').emit('getChatRooms', getChatRooms(chatRooms));
         } else {
-          console.log(`${connectedUserCount} user left in ${chatRoomId}`);
+          console.log(`[${connectedUserCount}] user left in ${chatRoomId}`);
           io.to(chatRoomId).emit(
             'getConnectedSockets',
             chatRooms[chatRoomId].connectedSockets
@@ -185,7 +193,8 @@ io.on('connection', (socket) => {
         delete connectedAdmins[socket.id];
       }
     } catch (err) {
-      console.log(err);
+      // 디스커넥트 시 에러 확인용, unexpected disconnect 뜨면 콘솔 err 찍어서 디버깅
+      // console.log(err); 
       console.log('unexpected disconnect');
     }
   });
