@@ -1,16 +1,25 @@
 import { db } from '../db/database.js';
 
-export async function getList({ colum, sign, number }) {
+export async function getList(condition) {
+  let where = '';
+  if (condition === '10ABV') {
+    where = 'ABV >= 10';
+  } else if (condition === '20ABV') {
+    where = 'ABV >= 20';
+  } else {
+    where = 'dc_percent > 0';
+  }
+
   const sql = `select alcohol_id, 
   alcohol_name, 
   dc_percent, 
   alcohol_img1,
   alcohol_price,
   hashtag
-  from alcohol where ${colum} ${sign} ?`
+  from alcohol where ${where}`
 
   return db
-    .execute(sql, [number])
+    .execute(sql)
     .then(row => row[0]);
 };
 
@@ -41,6 +50,6 @@ export async function getReviewStar(alcohol_id) {
   where al.alcohol_id = ?`
 
   return db
-  .execute(sql, [alcohol_id])
-  .then(row => row[0]);
+    .execute(sql, [alcohol_id])
+    .then(row => row[0]);
 };
