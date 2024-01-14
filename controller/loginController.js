@@ -14,7 +14,7 @@ export async function getLogin(req, res) {
                 result.login_result = true; // 로그인 성공
 
                 // jwt 토큰 생성
-                const token = jwt.sign({ id: id, user_role: result.user_role }, '58Ua|!{@>3{*');
+                const token = jwt.sign({ id: id, user_role: result.user_role, user_name: result.user_name }, '58Ua|!{@>3{*');
                 result.token = token;
             }
         }

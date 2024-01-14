@@ -13,6 +13,7 @@ import joinRouter from './router/joinRouter.js';
 import mypageRouter from './router/mypageRouter.js';
 import loginRouter from './router/loginRouter.js';
 import adminPageRouter from './router/adminPageRouter.js';
+import findRouter from './router/findRouter.js';
 
 const server = express();
 const PORT = 8000;
@@ -38,5 +39,5 @@ server.use('/join', joinRouter);
 server.use('/mypage', mypageRouter);
 server.use('/login', loginRouter);
 server.use('/adminpage', adminPageRouter);
-
+server.use('/find', findRouter);
 server.listen(PORT, ()=>{console.log(`listening on ${PORT}...`)})
