@@ -14,9 +14,9 @@ export async function getOrderAlcoholInfo(req, res) {
  * 주문 내역 추가 -> 주문 상품 내역 추가 -> 상품 재고 update -> 장바구니에서 삭제
  */
 export async function insertOrder(req, res) {
-    const {userId, recId, totalOrderPrice, orderAlcohol} = req.body;
+    const {userId, recName, recPhone, recAddress, totalOrderPrice, orderAlcohol} = req.body;
 
-    const result = await paymentRepository.insertOrderInfo({userId, recId, totalOrderPrice});
+    const result = await paymentRepository.insertOrderInfo({userId, recName, recPhone, recAddress, totalOrderPrice});
     if(result === 'ok'){
         for (const alcohol of orderAlcohol) {
             const alcoholId = alcohol.alcohol_id;

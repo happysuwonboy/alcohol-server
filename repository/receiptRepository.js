@@ -71,3 +71,14 @@ export async function updateRec(recId, name, phone, address, isDefault){
         .execute(sql, [name, phone, address, isDefault, recId])
         .then(result => 'ok');
 }
+
+/**
+ * 배송지 삭제
+*/
+export async function deleteRec(recId){
+    const sql = `DELETE FROM receipt
+                WHERE rec_id = ?`;
+    return db
+        .execute(sql, [recId])
+        .then(result => 'ok');
+}

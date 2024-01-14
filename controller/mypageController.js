@@ -8,6 +8,7 @@ export async function getMyAllReview(req, res) {
 };
 
 // 사용자의 리뷰 중 2개씩 요청
+
 export async function getMyReview(req, res) {
     const userid = req.params.userid;
     const page = req.query.page;

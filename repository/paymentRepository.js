@@ -17,11 +17,11 @@ export async function getOrderAlcoholInfo({userId, checked}) {
 /**
  * 주문 내역 추가
  */
-export async function insertOrderInfo({userId, recId, totalOrderPrice}) {
-    const sql = `INSERT INTO order_info(user_id, rec_id, order_date, total_price)
-	            VALUES(?,?,now(),?)`;
+export async function insertOrderInfo({userId, recName, recPhone, recAddress, totalOrderPrice}) {
+    const sql = `INSERT INTO order_info(user_id, order_date, total_price, rec_name, rec_phone, rec_address)
+	            VALUES(?, now(), ?, ?, ?, ?)`;
     return db
-        .execute(sql, [userId, recId, totalOrderPrice])
+        .execute(sql, [userId, totalOrderPrice, recName, recPhone, recAddress])
         .then(result => 'ok');
 }
 /**

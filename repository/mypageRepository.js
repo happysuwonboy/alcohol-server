@@ -150,12 +150,10 @@ export async function getCreateReviewDetails({ orderId, searchTerm }) {
  * 주문 내역 조회
  */
 export async function getOrders(userId) {
-  const sql = `SELECT oi.order_id, oi.user_id, LEFT(oi.order_date,10) as order_date, oi.total_price, rc.rec_name, rc.rec_phone, rc.rec_address
-                FROM order_info oi, receipt rc
-                WHERE oi.rec_id = rc.rec_id
-                AND oi.user_id = ?
-                ORDER BY oi.order_id desc`;
-
+    const sql = `SELECT order_id, user_id, LEFT(order_date,10) as order_date, total_price, rec_name, rec_phone, rec_address
+                FROM order_info
+                WHERE user_id = ?
+                ORDER BY order_id desc`;
   return db
     .execute(sql, [userId])
     .then(result => result[0]);
