@@ -116,13 +116,12 @@ export async function getCreateReview({ userid, startDate, endDate, index }) {
 
   const sql = `select no, order_id, user_id, order_date, total_price, 
   (select count(*) from order_info where user_id = ?) as total_rows
-  from (SELECT row_number() over (order by oi.order_id desc) as no,
-  oi.order_id, oi.user_id, LEFT(oi.order_date, 10) as order_date, oi.total_price
-  FROM order_info oi, receipt rc
-  WHERE oi.rec_id = rc.rec_id
-  AND oi.user_id = ?
+  from (SELECT row_number() over (order by order_id desc) as no,
+  order_id, user_id, LEFT(order_date, 10) as order_date, total_price
+  FROM order_info
+  where user_id = ?
   ${where}
-  ORDER BY oi.order_id desc) as orderlist
+  ORDER BY order_id desc) as orderlist
   where no between ? and ?`
 
   return db
