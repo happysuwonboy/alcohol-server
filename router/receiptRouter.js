@@ -8,5 +8,6 @@ router.get('/rec/:recId', receiptController.getSelectedRec);
 router.get('/default/:userId', receiptController.getOrderRecInfo);
 router.post('/insert', receiptController.insertRec);
 router.put('/update', receiptController.updateRec)
+router.delete('/delete/:recId', receiptController.deleteRec);
 
 export default router;

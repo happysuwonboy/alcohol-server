@@ -1,6 +1,5 @@
 import * as mypageRepository from '../repository/mypageRepository.js'
 
-
 export async function getMyReview(req, res) {
     const userid = req.params.userid;
     const page = req.query.page;

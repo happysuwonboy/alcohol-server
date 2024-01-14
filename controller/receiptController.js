@@ -22,7 +22,6 @@ export async function getOrderRecInfo(req, res) {
  */
 export async function getSelectedRec(req, res) {
     const recId = req.params.recId;
-    console.log(recId);
     const row = await receiptRepository.getSelectedRec(recId);
     res.json(row);
 }
@@ -59,4 +58,13 @@ export async function updateRec(req, res) {
             res.json(result);
         }
     }
+}
+
+/**
+ * 배송지 삭제
+*/
+export async function deleteRec(req, res) {
+    const recId = req.params.recId;
+    const result = await receiptRepository.deleteRec(recId);
+    res.json(result);
 }
