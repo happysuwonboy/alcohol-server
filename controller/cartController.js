@@ -19,11 +19,27 @@ export async function updateQty(req, res) {
 }
 
 /**
+ * 장바구니에 담기
+ */
+export async function insertCart(req, res) {
+    const {userId, alcoholId, qty} = req.body;
+    const result = await cartRepository.insertCart({userId, alcoholId, qty}); 
+    res.json(result); 
+}
+/**
+ * 장바구니에 담기 (이미 있는 경우 수량 업데이트)
+*/
+export async function updateCart(req, res) {
+    const {userId, alcoholId, qty} = req.body;
+    const result = await cartRepository.updateCart({userId, alcoholId, qty}); 
+    res.json(result); 
+}
+
+/**
  * 장바구니 상품 삭제
  */
 export async function removeCart(req, res) {
     const {userId, alcoholId} = req.params;
-    console.log(userId, alcoholId);
     const result = await cartRepository.removeCart({userId, alcoholId}); 
     res.json(result); 
 }

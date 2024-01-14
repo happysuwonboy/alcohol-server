@@ -35,6 +35,29 @@ export async function updateQty({userId, alcoholId, checkFlag}){
 }
 
 /**
+ * 장바구니에 담기
+*/
+export async function insertCart({userId, alcoholId, qty}){  
+    const sql = `INSERT INTO cart(user_id, alcohol_id, qty)
+                VALUES(?,?,?);`;
+
+    return db
+        .execute(sql, [userId, alcoholId, qty]) 
+        .then((result) => 'ok');
+}
+/**
+ * 장바구니에 담기 (이미 있는 경우 수량 업데이트)
+*/
+export async function updateCart({userId, alcoholId, qty}){  
+    const sql = `UPDATE cart SET qty = (qty+?)
+                WHERE user_id = ? AND alcohol_id = ?;`;
+
+    return db
+        .execute(sql, [qty, userId, alcoholId]) 
+        .then((result) => 'ok');
+}
+
+/**
  * 장바구니 상품 삭제
  */
 export async function removeCart({userId, alcoholId}){  
