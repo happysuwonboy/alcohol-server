@@ -6,7 +6,7 @@ export async function getAlcoholInfo(alcohol_id) {
   .execute(`select al.alcohol_id, alcohol_name, alcohol_price, dc_percent, alcohol_type, ABV, alcohol_volume,
                   food, alcohol_comment1, alcohol_comment2, alcohol_img1, alcohol_img2, alcohol_img3, 
                   left(register_date, 10) as register_date, hashtag, flavor_sweet, flavor_sour, 
-                  flavor_soda, flavor_body, review_cnt, avg_rate
+                  flavor_soda, flavor_body, review_cnt, avg_rate, stock
                   from alcohol al 
                   left outer join 
                   (select od.alcohol_id as alcohol_id, count(review_id) as review_cnt,round(avg(review_star), 1) as avg_rate
