@@ -93,7 +93,7 @@ io.on('connection', (socket) => {
   socket.on('joinChatRoom', (chatRoomId) => {
     if (!chatRooms[chatRoomId]) {
       chatRooms[chatRoomId] = { messages: [], connectedSockets: [socket.id] };
-      console.log(`[${chatRoomId}] has been created`);
+      // console.log(`[${chatRoomId}] has been created`);
       io.to('admin').emit('getChatRooms', getChatRooms(chatRooms));
     } else {
       chatRooms[chatRoomId].connectedSockets.push(socket.id);
@@ -102,7 +102,7 @@ io.on('connection', (socket) => {
       connectedAdmins[socket.id].joinedChatRoom = chatRoomId;
     }
     socket.join(chatRoomId);
-    console.log(`${socket.id} has joined ${chatRoomId}`);
+    // console.log(`${socket.id} has joined ${chatRoomId}`);
     io.to(chatRoomId).emit('getPrevMessage', chatRooms[chatRoomId].messages);
     io.to(chatRoomId).emit(
       'getConnectedSockets',
@@ -118,6 +118,7 @@ io.on('connection', (socket) => {
       chatRoomConnects.splice(leaveSocketIdx, 1);
       socket.leave(chatRoomId);
       const connectedUserCount = chatRoomConnects.length;
+      // console.log(`[${socket.id}] has left ${chatRoomId}`);
       if (connectedUserCount) {
         io.to(chatRoomId).emit(
           'getConnectedSockets',
@@ -126,7 +127,7 @@ io.on('connection', (socket) => {
       } else {
         delete chatRooms[chatRoomId];
         io.to('admin').emit('getChatRooms', getChatRooms(chatRooms));
-        console.log(`[${chatRoomId}] has been deleted`);
+        // console.log(`[${chatRoomId}] has been deleted`);
       }
     } else { // 일반유저
 
@@ -161,13 +162,13 @@ io.on('connection', (socket) => {
         ); // 유저 접속 정보 삭제
         chatRoomConnects.splice(disconnectIdx, 1); // 채팅방 객체에서 방금 나간 유저의 소켓정보 삭제
         const connectedUserCount = chatRoomConnects.length;
-        console.log(`[${socket.id}] has left ${chatRoomId}`);
+        // console.log(`[${socket.id}] has left ${chatRoomId}`);
         if (connectedUserCount === 0) {
           delete chatRooms[chatRoomId];
-          console.log(`[${chatRoomId}] has been deleted`);
+          // console.log(`[${chatRoomId}] has been deleted`);
           io.to('admin').emit('getChatRooms', getChatRooms(chatRooms));
         } else {
-          console.log(`[${connectedUserCount}] user left in ${chatRoomId}`);
+          // console.log(`[${connectedUserCount}] user left in ${chatRoomId}`);
           io.to(chatRoomId).emit(
             'getConnectedSockets',
             chatRooms[chatRoomId].connectedSockets
@@ -181,6 +182,7 @@ io.on('connection', (socket) => {
           const disconnectIdx = chatRoomConnects.indexOf(socket.id);
           chatRoomConnects.splice(disconnectIdx, 1);
           const connectedUserCount = chatRoomConnects.length;
+          // console.log(`[${socket.id}] has left ${chatRoomId}`);
           if (connectedUserCount === 0) {
             delete chatRooms[chatRoomId];
           } else {
