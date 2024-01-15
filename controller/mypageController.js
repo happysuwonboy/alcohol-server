@@ -23,15 +23,27 @@ export async function getMyReview(req, res) {
 
 // 전체 리뷰 삭제 요청
 export async function deleteCheckedMyReview(req, res) {
-    const { checkedReview } = req.body;
-    const result = await mypageRepository.deleteCheckedMyReview(checkedReview);
+    const { checkedReview, checkedReview2 } = req.body;
+    console.log(checkedReview2);
+    const result1 = await mypageRepository.deleteCheckedMyReview(checkedReview);
+    const result2 = await mypageRepository.deleteUpdateMyReview(checkedReview2);
+    let result = '';
+    if(result1 === 'ok' && result2 === 'all delete ok') {
+        result = 'ok';
+    }
     res.json(result);
 };
 
 // 각 리뷰 삭제 요청
 export async function deleteMyReview(req, res) {
     const reviewid = req.params.review_id;
-    const result = await mypageRepository.deleteMyReview(reviewid);
+    const orderDetailId = req.params.orderDetailId
+    const result1 = await mypageRepository.deleteMyReview(reviewid);
+    const result2 = await mypageRepository.deleteUpdateReview(orderDetailId);
+    let result = '';
+    if(result1 === 'ok' && result2 === 'delete ok') {
+        result = 'ok';
+    }
     res.json(result);
 };
 

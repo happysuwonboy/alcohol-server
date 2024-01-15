@@ -1,7 +1,7 @@
 import { db } from '../db/database.js';
 
 export async function getMyAllReview(userid) {
-  const sql = ` select review_id from review where user_id = ?`
+  const sql = ` select review_id, order_detail_id from review where user_id = ?`
 
   return db
     .execute(sql, [userid])
@@ -81,6 +81,23 @@ export async function deleteMyReview(reviewid) {
     .then(result => 'ok');
 };
 
+export async function deleteUpdateMyReview(checkedReview2) {
+  const placeholders = new Array(checkedReview2.length).fill('?').join(', ');
+  const sql = `update order_detail set register_review = 0 where order_detail_id in (${placeholders})`
+
+  return db
+  .execute(sql, checkedReview2)
+  .then(result => 'all delete ok')
+};
+
+export async function deleteUpdateReview(orderDetailId) {
+  const sql = `update order_detail set register_review = 0 where order_detail_id = ?`
+
+  return db
+  .execute(sql, [orderDetailId])
+  .then(result => 'delete ok')
+};
+
 export async function updateMyReview({ id, imagefile, content, star }) {
   const sql = `update review set review_img = ?, review_content = ?, review_star = ? where review_id = ?`;
 
@@ -116,13 +133,12 @@ export async function getCreateReview({ userid, startDate, endDate, index }) {
 
   const sql = `select no, order_id, user_id, order_date, total_price, 
   (select count(*) from order_info where user_id = ?) as total_rows
-  from (SELECT row_number() over (order by oi.order_id desc) as no,
-  oi.order_id, oi.user_id, LEFT(oi.order_date, 10) as order_date, oi.total_price
-  FROM order_info oi, receipt rc
-  WHERE oi.rec_id = rc.rec_id
-  AND oi.user_id = ?
+  from (SELECT row_number() over (order by order_id desc) as no,
+  order_id, user_id, LEFT(order_date, 10) as order_date, total_price
+  FROM order_info
+  where user_id = ?
   ${where}
-  ORDER BY oi.order_id desc) as orderlist
+  ORDER BY order_id desc) as orderlist
   where no between ? and ?`
 
   return db
