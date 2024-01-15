@@ -1,7 +1,7 @@
 import { db } from '../db/database.js';
 
 export async function getMyAllReview(userid) {
-  const sql = ` select review_id from review where user_id = ?`
+  const sql = ` select review_id, order_detail_id from review where user_id = ?`
 
   return db
     .execute(sql, [userid])
@@ -79,6 +79,23 @@ export async function deleteMyReview(reviewid) {
   return db
     .execute(sql, [reviewid])
     .then(result => 'ok');
+};
+
+export async function deleteUpdateMyReview(checkedReview2) {
+  const placeholders = new Array(checkedReview2.length).fill('?').join(', ');
+  const sql = `update order_detail set register_review = 0 where order_detail_id in (${placeholders})`
+
+  return db
+  .execute(sql, checkedReview2)
+  .then(result => 'all delete ok')
+};
+
+export async function deleteUpdateReview(orderDetailId) {
+  const sql = `update order_detail set register_review = 0 where order_detail_id = ?`
+
+  return db
+  .execute(sql, [orderDetailId])
+  .then(result => 'delete ok')
 };
 
 export async function updateMyReview({ id, imagefile, content, star }) {
